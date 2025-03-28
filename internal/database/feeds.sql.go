@@ -19,12 +19,12 @@ RETURNING id, created_at, updated_at, name, url, user_id
 `
 
 type CreateFeedParams struct {
-	ID        uuid.UUID     `json:"id"`
-	CreatedAt time.Time     `json:"created_at"`
-	UpdatedAt time.Time     `json:"updated_at"`
-	Name      string        `json:"name"`
-	Url       string        `json:"url"`
-	UserID    uuid.NullUUID `json:"user_id"`
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Name      string    `json:"name"`
+	Url       string    `json:"url"`
+	UserID    uuid.UUID `json:"user_id"`
 }
 
 func (q *Queries) CreateFeed(ctx context.Context, arg CreateFeedParams) (Feed, error) {
@@ -53,8 +53,8 @@ SELECT id, created_at, updated_at, name, url, user_id FROM feeds WHERE id=$1 AND
 `
 
 type GetFeedParams struct {
-	ID     uuid.UUID     `json:"id"`
-	UserID uuid.NullUUID `json:"user_id"`
+	ID     uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"user_id"`
 }
 
 func (q *Queries) GetFeed(ctx context.Context, arg GetFeedParams) (Feed, error) {
@@ -75,7 +75,7 @@ const getFeeds = `-- name: GetFeeds :many
 SELECT id, created_at, updated_at, name, url, user_id FROM feeds WHERE user_id=$1
 `
 
-func (q *Queries) GetFeeds(ctx context.Context, userID uuid.NullUUID) ([]Feed, error) {
+func (q *Queries) GetFeeds(ctx context.Context, userID uuid.UUID) ([]Feed, error) {
 	rows, err := q.db.QueryContext(ctx, getFeeds, userID)
 	if err != nil {
 		return nil, err
