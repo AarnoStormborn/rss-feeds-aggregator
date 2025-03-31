@@ -49,16 +49,11 @@ func (q *Queries) CreateFeed(ctx context.Context, arg CreateFeedParams) (Feed, e
 }
 
 const getFeed = `-- name: GetFeed :one
-SELECT id, created_at, updated_at, name, url, user_id FROM feeds WHERE id=$1 AND user_id=$2
+SELECT id, created_at, updated_at, name, url, user_id FROM feeds WHERE id=$1
 `
 
-type GetFeedParams struct {
-	ID     uuid.UUID `json:"id"`
-	UserID uuid.UUID `json:"user_id"`
-}
-
-func (q *Queries) GetFeed(ctx context.Context, arg GetFeedParams) (Feed, error) {
-	row := q.db.QueryRowContext(ctx, getFeed, arg.ID, arg.UserID)
+func (q *Queries) GetFeed(ctx context.Context, id uuid.UUID) (Feed, error) {
+	row := q.db.QueryRowContext(ctx, getFeed, id)
 	var i Feed
 	err := row.Scan(
 		&i.ID,
@@ -72,11 +67,11 @@ func (q *Queries) GetFeed(ctx context.Context, arg GetFeedParams) (Feed, error) 
 }
 
 const getFeeds = `-- name: GetFeeds :many
-SELECT id, created_at, updated_at, name, url, user_id FROM feeds WHERE user_id=$1
+SELECT id, created_at, updated_at, name, url, user_id FROM feeds
 `
 
-func (q *Queries) GetFeeds(ctx context.Context, userID uuid.UUID) ([]Feed, error) {
-	rows, err := q.db.QueryContext(ctx, getFeeds, userID)
+func (q *Queries) GetFeeds(ctx context.Context) ([]Feed, error) {
+	rows, err := q.db.QueryContext(ctx, getFeeds)
 	if err != nil {
 		return nil, err
 	}
